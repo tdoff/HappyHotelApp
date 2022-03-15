@@ -2,17 +2,18 @@ package com.mockitotutorial.happyhotel.booking;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-class Test06Matchers {
+class Test07VerifyingBehaviour {
 
     private BookingService bookingService;
 
@@ -32,17 +33,31 @@ class Test06Matchers {
     }
 
     @Test
-    void should_NotCompleteBooking_When_PriceTooHigh() {
+    void should_InvokePayment_When_Prepaid() {
         // given
         BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2022, 3, 21),
                 LocalDate.of(2022, 3, 24), 2, true);
-        when(paymentServiceMock.pay(any(), eq(300.0))).thenThrow(new UnsupportedOperationException("Only small payments are supported."));
 
         // when
-        Executable executable = () -> bookingService.makeBooking(bookingRequest);
+        bookingService.makeBooking(bookingRequest);
 
         // then
-        assertThrows(UnsupportedOperationException.class, executable);
+        verify(paymentServiceMock, times(1)).pay(bookingRequest, 300.0);
+        verifyNoMoreInteractions(paymentServiceMock);
+
+    }
+
+    @Test
+    void should_NotInvokePayment_When_NotPrepaid() {
+        // given
+        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2022, 3, 21),
+                LocalDate.of(2022, 3, 24), 2, false);
+
+        // when
+        bookingService.makeBooking(bookingRequest);
+
+        // then
+        verify(paymentServiceMock, never()).pay(any(), anyDouble());
 
     }
 }
