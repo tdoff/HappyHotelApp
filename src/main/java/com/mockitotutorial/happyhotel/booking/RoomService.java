@@ -1,6 +1,8 @@
 package com.mockitotutorial.happyhotel.booking;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RoomService {
@@ -24,7 +26,7 @@ public class RoomService {
 				.orElseThrow(BusinessException::new);
 	}
 	
-	public List<Room> getAvailableRooms() {
+	public final List<Room> getAvailableRooms() {
 		return roomAvailability.entrySet().stream()
 				.filter(entry -> entry.getValue())
 				.map(entry -> entry.getKey())

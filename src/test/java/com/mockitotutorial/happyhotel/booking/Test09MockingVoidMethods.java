@@ -8,7 +8,9 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 class Test09MockingVoidMethods {
 
@@ -32,8 +34,9 @@ class Test09MockingVoidMethods {
     @Test
     void should_ThrowException_When_MailNotReady() {
         // given
-        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2022, 3, 21),
-                LocalDate.of(2022, 3, 24), 2, false);
+        LocalDate dateFrom = LocalDate.of(2022, 3, 21);
+        LocalDate dateTo = LocalDate.of(2022, 3, 24);
+        BookingRequest bookingRequest = new BookingRequest("1", dateFrom, dateTo, 2, false);
         doThrow(new UnsupportedOperationException("Not implemented yet")).when(mailSenderMock).sendBookingConfirmation(any());
 
         // when
@@ -47,8 +50,10 @@ class Test09MockingVoidMethods {
     @Test
     void should_NotThrowException_When_MailNotReady() {
         // given
-        BookingRequest bookingRequest = new BookingRequest("1", LocalDate.of(2022, 3, 21),
-                LocalDate.of(2022, 3, 24), 2, false);
+        LocalDate dateFrom = LocalDate.of(2022, 3, 21);
+        LocalDate dateTo = LocalDate.of(2022, 3, 24);
+
+        BookingRequest bookingRequest = new BookingRequest("1", dateFrom, dateTo, 2, false);
         doNothing().when(mailSenderMock).sendBookingConfirmation(any());
 
         // when
